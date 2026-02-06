@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProCookies | المنيو الرسمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-purple: #e2a7d3; 
+            --light-lavender: #edbde1; 
+            --dark-purple: #7B1FA2;
+            --bg-page:#e2a7d3; 
+            --whatsapp-green: #25D366;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('ppp (1).jpg'); 
+            background-attachment: fixed; 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0; 
+            padding: 0;
+            color: #444;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .nav-container {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.7) !important;
+            backdrop-filter: blur(8px);
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .header {
+            background:#e2a7d3;
+            text-align: center;
+            padding: 40px 20px 10px;
+        }
+        .header img { max-width: 150px; width: 100%; height: auto; }
+
+        .tabs-pills {
+            display: flex;
+            background: #EBE0F0;
+            padding: 5px;
+            border-radius: 50px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .tab-link {
+            flex: 1; border: none; background: none; padding: 12px 5px;
+            border-radius: 50px; font-family: 'Cairo', sans-serif;
+            font-weight: bold; font-size: clamp(0.8rem, 2.5vw, 1rem); color: #8E7C96;
+            cursor: pointer; transition: 0.4s;
+        }
+
+        .tab-link.active {
+            color: white; background-color: var(--dark-purple);
+            box-shadow: 0 4px 12px rgba(123, 31, 162, 0.3);
+        }
+
+        .container { 
+            max-width: 800px;
+            margin: 0 auto; padding: 20px 15px 150px; min-height: 60vh;
+        }
+
+        .category-wrapper { display: none; opacity: 0; transform: translateY(20px); transition: 0.5s ease; }
+        .category-wrapper.active { display: block; opacity: 1; transform: translateY(0); }
+
+        .sub-category {
+            background: white; margin-bottom: 15px; border-radius: 20px;
+            overflow: hidden; box-shadow: 0 8px 20px rgba(123, 31, 162, 0.1);
+        }
+
+        .sub-category-header {
+            padding: 18px 25px; color: var(--dark-purple); font-weight: 700;
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .sub-category-content { display: none; padding: 0 20px 20px; }
+        .sub-category-content.open { display: block; animation: fadeIn 0.3s ease; }
+
+        .menu-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 0; border-bottom: 1px solid #F3E5F5;
+            gap: 10px;
+        }
+        .item-name { font-weight: bold; color: #333; font-size: 0.95rem; line-height: 1.4; }
+        .item-desc { display: block; font-size: 0.75rem; color: #777; font-weight: normal; margin-top: 4px; }
+        .item-price {
+            background: var(--light-lavender); color: var(--dark-purple);
+            padding: 5px 12px; border-radius: 10px; font-weight: 700; font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .order-now-btn, .review-btn {
+            position: fixed; bottom: 90px;
+            padding: 12px 20px; border-radius: 50px; text-decoration: none;
+            font-weight: bold; display: flex; align-items: center; gap: 8px;
+            z-index: 2000; font-family: 'Cairo'; font-size: 0.9rem;
+        }
+        .order-now-btn { right: 20px; background-color: var(--whatsapp-green); color: white; box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); }
+        .review-btn { left: 20px; background-color: var(--dark-purple); color: white; box-shadow: 0 8px 25px rgba(123, 31, 162, 0.4); border: none; cursor: pointer; }
+
+        .modal {
+            display: none; position: fixed; z-index: 3000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+        }
+        .modal-content {
+            background-color: white; margin: 2vh auto; padding: 20px;
+            border-radius: 25px; width: 95%; max-width: 500px;
+            max-height: 90vh; text-align: center;
+            position: relative; overflow-y: auto;
+        }
+
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-thumb { background: var(--brand-purple); border-radius: 10px; }
+
+        .gallery-vertical { display: flex; flex-direction: column; gap: 20px; padding: 10px 0; }
+        .gallery-vertical img { width: 100%; height: auto; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+        .close-modal { 
+            position: sticky; top: 0; float: left;
+            color: #333; font-size: 35px; font-weight: bold; 
+            cursor: pointer; z-index: 3100; background: white;
+            border-radius: 50%; width: 40px; height: 40px; line-height: 35px;
+        }
+
+        .social-footer {
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95); padding: 10px 30px;
+            border-radius: 50px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            display: flex; gap: 20px; z-index: 1500;
+        }
+        .social-footer a { text-decoration: none; color: var(--dark-purple); font-weight: bold; font-size: 0.85rem; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="Pro1.png" alt="ProCookies Logo">
+    </div>
+
+    <div class="nav-container">
+        <div class="tabs-pills">
+            <button class="tab-link active" onclick="showMainSection(event, 'sweets-group')">حلويات 🍰</button>
+            <button class="tab-link" onclick="showMainSection(event, 'food-group')">موالح 🍕</button>
+            <button class="tab-link" onclick="showMainSection(event, 'drinks-group')">مشروبات 🥤</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="sweets-group" class="category-wrapper active">
+            <div class="sub-category">
+                <div class="sub-category-header" onclick="toggleSub(this)">
+                    <span>Cupcake 🧁</span>
+                    <span class="icon">＋</span>
+                </div>
+                <div class="sub-category-content">
+                    <div class="menu-item"><span class="item-name"> بوكس كب كيك فانيليا (6 قطع)</span><span class="item-price">115 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بوكس كب كيك شوكولاتة (6 قطع)</span><span class="item-price">115 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">قطعة فانيليا</span><span class="item-price">25 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">قطعة شوكولاتة</span><span class="item-price">25 EGP</span></div>
+                </div>
+            </div>
+            
+            <div class="sub-category">
+                <div class="sub-category-header" onclick="toggleSub(this)">
+                    <span>قشطوطة 🍮</span>
+                    <span class="icon">＋</span>
+                </div>
+                <div class="sub-category-content">
+                    <div class="menu-item"><span class="item-name">قشطوطة كراميل</span><span class="item-price">60 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">قشطوطة فواكه</span><span class="item-price">65 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">قشطوطة ميكس صوصات</span><span class="item-price">70 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">ميني قشطوطة كراميل</span><span class="item-price">30 EGP</span></div>
+                </div>
+            </div>
+
+            <div class="sub-category">
+                <div class="sub-category-header" onclick="toggleSub(this)">
+                    <span>Donuts 🍩</span>
+                    <span class="icon">＋</span>
+                </div>
+                <div class="sub-category-content">
+                    <div class="menu-item"><span class="item-name">بوكس دوناتس (4 قطع: ميكس صوصات)</span><span class="item-price">115 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بوكس دوناتس بينك</span><span class="item-price">135 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بوكس دوناتس (6 قطع)</span><span class="item-price">155 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">ميني دوناتس (10 قطع)</span><span class="item-price">105 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">ميني دوناتس (6 قطع)</span><span class="item-price">65 EGP</span></div>
+                </div>
+            </div>
+
+            <div class="sub-category">
+                <div class="sub-category-header" onclick="toggleSub(this)">
+                    <span>Cinnaboom Roll 🥐</span>
+                    <span class="icon">＋</span>
+                </div>
+                <div class="sub-category-content">
+                    <div class="menu-item"><span class="item-name">بوكس سينابون كبير</span><span class="item-price">150 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بوكس سينابون صغير</span><span class="item-price">55 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">سينابون عادي</span><span class="item-price">60 EGP</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="food-group" class="category-wrapper">
+            <div class="sub-category">
+                <div class="sub-category-header" onclick="toggleSub(this)">
+                    <span>FOOD SYRIA 🇸🇾</span>
+                    <span class="icon">＋</span>
+                </div>
+                <div class="sub-category-content">
+                    <div class="menu-item"><span class="item-name">شاورما كبير</span><span class="item-price">55 EGP</span></div>
+                    <div class="menu-item">
+                        <span class="item-name">فتة شاورما كبير<br><small class="item-desc">(رز بسمتي / ثومية / باربكيو)</small></span>
+                        <span class="item-price">105 EGP</span>
+                    </div>
+                    <div class="menu-item"><span class="item-name">فتة شاورما وسط</span><span class="item-price">75 EGP</span></div>
+                    <div style="padding: 10px 0; font-weight: bold; color: var(--dark-purple); border-bottom: 1px solid #eee;">الإضافات:</div>
+                    <div class="menu-item"><span class="item-name">صوص شيدر</span><span class="item-price">10 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">باربكيو صوص</span><span class="item-price">10 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">ثومية</span><span class="item-price">7 EGP</span></div>
+                </div>
+            </div>
+
+            <div class="sub-category">
+                <div class="sub-category-header" onclick="toggleSub(this)">
+                    <span>SANDWICHES 🥪</span>
+                    <span class="icon">＋</span>
+                </div>
+                <div class="sub-category-content">
+                    <div class="menu-item"><span class="item-name">برجر لحمه</span><span class="item-price">65 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">برجر اتشكن</span><span class="item-price">60 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بانيه فرنش</span><span class="item-price">45 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">كبدة كبير</span><span class="item-price">25 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">كبدة صغير</span><span class="item-price">10 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">سجق شرقي</span><span class="item-price">30 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">سجق بلدي</span><span class="item-price">25 EGP</span></div>
+                </div>
+            </div>
+
+            <div class="sub-category">
+                <div class="sub-category-header" onclick="toggleSub(this)">
+                    <span>MAIN COURSE 🍽️</span>
+                    <span class="icon">＋</span>
+                </div>
+                <div class="sub-category-content">
+                    <div class="menu-item"><span class="item-name">نجرسكو عائلي</span><span class="item-price">230 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">طاجن فخار نجرسكو</span><span class="item-price">250 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">نجرسكو وسط</span><span class="item-price">120 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">نجرسكو صغيره</span><span class="item-price">65 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">اسبجتي و بانيه</span><span class="item-price">65 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">مكرونه بالسجق</span><span class="item-price">65 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بشاميل وسط</span><span class="item-price">150 EGP</span></div>
+                </div>
+            </div>
+
+            <div class="sub-category">
+                <div class="sub-category-header" onclick="toggleSub(this)">
+                    <span>MAIN PIZZA 🍕</span>
+                    <span class="icon">＋</span>
+                </div>
+                <div class="sub-category-content">
+                    <div class="menu-item"><span class="item-name">بيتزا اتشكن استربس كبيره</span><span class="item-price">145 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بيتزا فراخ كبيره</span><span class="item-price">135 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بيتزا اتشكن استربس وسط</span><span class="item-price">135 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بيتزا فراخ وسط</span><span class="item-price">125 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بيتزا اتشكن استربس صغيره</span><span class="item-price">120 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بيتزا فراخ صغيره</span><span class="item-price">110 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بيتزا سجق</span><span class="item-price">120 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">بيتزا اتشكن رانش</span><span class="item-price">140 EGP</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="drinks-group" class="category-wrapper">
+             <div class="sub-category">
+                <div class="sub-category-header" onclick="toggleSub(this)">
+                    <span>Coffee & Drinks ☕</span>
+                    <span class="icon">＋</span>
+                </div>
+                <div class="sub-category-content">
+                    <div class="menu-item"><span class="item-name">Coffee biscuits (Large)</span><span class="item-price">55 EGP</span></div>
+                    <div class="menu-item"><span class="item-name">Coffee biscuits (Small)</span><span class="item-price">30 EGP</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="review-btn" onclick="openModal()">🫣 Take a look</button>
+    <a href="https://wa.me/201024403384" target="_blank" class="order-now-btn">اطلب دلوقتي <span>←</span></a>
+
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--dark-purple); margin-top: 10px;">Take a look 🫣</h2>
+            <p style="font-size: 0.9rem; color: #777; margin-bottom: 20px;">تصفح صور منتجاتنا 👇</p>
+            <div class="gallery-vertical">
+                <img src="Pro2 (1).jpeg" alt="Preview">
+                <img src="Pro2 (2).jpeg" alt="Preview">
+                <img src="Pro2 (3).jpeg" alt="Preview">
+                <img src="Pro2 (4).jpeg" alt="Preview">
+                <img src="Pro2 (5).jpeg" alt="Preview">
+                <img src="Pro2 (6).jpeg" alt="Preview">
+                <img src="Pro2 (7).jpeg" alt="Preview">
+                <img src="Pro2 (8).jpeg" alt="Preview">
+                <img src="Pro2 (9).jpeg" alt="Preview">
+                <img src="Pro2 (10).jpeg" alt="Preview">
+                <img src="Pro2 (11).jpeg" alt="Preview">
+            </div>
+        </div>
+    </div>
+
+    <div class="social-footer">
+        <a href="https://www.instagram.com/proc.ookies" target="_blank">Instagram</a>
+        <a href="https://www.facebook.com/share/1Ax5uzZ9DQ/" target="_blank">Facebook</a>
+        <a href="https://www.tiktok.com/@procookies0" target="_blank">TikTok</a>
+    </div>
+
+    <script>
+        function showMainSection(evt, sectionId) {
+            var i, tabContent, tabLinks;
+            tabContent = document.getElementsByClassName("category-wrapper");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].classList.remove("active");
+                tabContent[i].style.display = "none";
+            }
+            tabLinks = document.getElementsByClassName("tab-link");
+            for (i = 0; i < tabLinks.length; i++) { tabLinks[i].classList.remove("active"); }
+            const activeSection = document.getElementById(sectionId);
+            activeSection.style.display = "block";
+            setTimeout(() => activeSection.classList.add("active"), 10);
+            evt.currentTarget.classList.add("active");
+        }
+
+        function toggleSub(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.icon');
+            if (!content.classList.contains('open')) {
+                content.classList.add('open');
+                icon.textContent = '－';
+                header.style.backgroundColor = "var(--light-lavender)";
+            } else {
+                content.classList.remove('open');
+                icon.textContent = '＋';
+                header.style.backgroundColor = "white";
+            }
+        }
+
+        function openModal() { 
+            document.getElementById("reviewModal").style.display = "block";
+            document.body.style.overflow = "hidden";
+        }
+        function closeModal() { 
+            document.getElementById("reviewModal").style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+        window.onclick = function(event) {
+            let modal = document.getElementById("reviewModal");
+            if (event.target == modal) { closeModal(); }
+        }
+    </script>
+</body>
+</html>
